@@ -29,4 +29,16 @@ stages:
         python3.9 -m pip install -r requirements.txt
       workingDirectory: $(projectRoot)
       displayName: 'Step - Install requirements.txt'
+    
+    - task: ArchiveFiles@2
+      displayName: 'Step -Archive files'
+      inputs:
+        rootFolderOrFile: '$(projectRoot)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        replaceExistingArchive: true
 
+    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      displayName: 'Upload package'
+      artifact: drop
