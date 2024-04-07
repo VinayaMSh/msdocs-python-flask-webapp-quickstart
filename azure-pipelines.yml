@@ -6,7 +6,7 @@
 trigger:
 - main
 
-pool: myAgentPool
+pool: udacitydemo3Pool
 
 steps:
 - script: echo Hello, world!
