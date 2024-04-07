@@ -10,10 +10,10 @@ trigger:
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
-  azureServiceConnectionId: 'myServiceConnection'
+  azureServiceConnectionId: 'myUdacityDemo3ServiceConn'
   
   # Web app name
-  webAppName: 'udacity-flask-service'
+  webAppName: 'my-udacity-demo3'
 
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
@@ -24,7 +24,7 @@ stages:
   displayName: Build stage
   jobs:
   - job: BuildJob
-    pool: myAgentPool
+    pool: udacitydemo3Pool
     steps:    
     - script: |
         export PATH=$HOME/.local/bin:$PATH
@@ -51,7 +51,7 @@ stages:
   condition: succeeded()
   jobs:
   - deployment: DeploymentJob
-    pool: myAgentPool
+    pool: udacitydemo3Pool
     environment: $(environmentName)
     strategy:
       runOnce:
