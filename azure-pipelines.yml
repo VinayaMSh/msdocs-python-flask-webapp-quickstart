@@ -3,16 +3,47 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
 trigger:
 - main
+- build
 
-pool: udacitydemo3Pool
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  azureServiceConnectionId: 'myUdacityDemo3ServiceConn'
+  
+  # Web app name
+  webAppName: 'my-udacity-demo3'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  # Project root folder. Point to the folder containing manage.py file.
+  projectRoot: $(System.DefaultWorkingDirectory)
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: BuildJob
+    pool: udacitydemo3Pool
+    steps:    
+    - script: |
+        export PATH=$HOME/.local/bin:$PATH
+        python3.9 -m pip install -r requirements.txt
+      workingDirectory: $(projectRoot)
+      displayName: 'Step - Install requirements.txt'
+    
+    - task: ArchiveFiles@2
+      displayName: 'Step -Archive files'
+      inputs:
+        rootFolderOrFile: '$(projectRoot)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        replaceExistingArchive: true
+
+    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      displayName: 'Upload package'
+      artifact: drop
